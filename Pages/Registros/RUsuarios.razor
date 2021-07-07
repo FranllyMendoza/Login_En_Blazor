@@ -1,0 +1,149 @@
+﻿@page "/RUsuarios"
+
+
+@using Login_En_Blazor.BLL
+@using Login_En_Blazor.Models
+@using Blazored.Toast;
+@using Blazored.Toast.Services;
+
+@inject IToastService toast
+
+
+<EditForm Model="user" OnValidSubmit="Guardar">
+
+    <DataAnnotationsValidator />
+    <div class="card">
+        <div class="card-header">
+            <h1>Registro de usuarios</h1>
+        </div>
+        <div class="card-body">
+            <form />
+            <div class="form-row align-items-center">
+                <div class="col">
+                    <div class="form-group">
+                        <label>PersonaId</label>
+                        <div class="input-group">
+                            <InputNumber @bind-Value="user.UsuarioId" class="form-control col-4" />
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-primary" @onclick="Buscar">
+                                    <span class="oi oi-magnifying-glass"></span> Buscar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <label>Nombre</label>
+                <InputText @bind-Value="user.Nombre" class="form-control" />
+                <ValidationMessage For="@(() => user.Nombre)" />
+            </div>
+
+
+            <div class="form-group">
+                <label>Email</label>
+                <InputText @bind-Value="user.Email" class="form-control" />
+                <ValidationMessage For="@(() => user.Email)" />
+            </div>
+
+
+            <div class="form-group">
+                <label>Clave</label>
+                <InputText @bind-Value="user.Clave" class="form-control" />
+                <ValidationMessage For="@(() => user.Clave)" />
+            </div>
+
+
+            <div class="form-group">
+                <label>confirmar clave</label>
+                <InputText @bind-Value="user.ConfirmarClave" class="form-control" />
+                <ValidationMessage For="@(() => user.ConfirmarClave)" />
+            </div>
+
+        </div>
+
+        <div class="card-footer">
+            <div class="form-group text-center" display: inline-block>
+                <button type="button" class="btn btn-lg btn-primary" @onclick="Nuevo">
+                    <span class="oi oi-file mr-2"></span> Nuevo
+                </button>
+                <button type="submit" class="btn btn-lg btn-success">
+                    <span class="oi oi-account-login" style="transform:rotate(90deg)"></span> Guardar
+                </button>
+                <button type="button" class="btn btn-lg btn-danger" @onclick="Eliminar">
+                    <span class="oi oi-trash mr-2"></span>   Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+
+
+    [Parameter]
+    public int UsuarioId { get; set; }
+
+    private Usuarios user = new Usuarios();
+
+
+    protected override void OnInitialized()
+    {
+        Nuevo();
+        Buscar();
+    }
+
+    public void Nuevo()
+    {
+        user = new Usuarios();
+    }
+
+
+    private void Buscar()
+    {
+        if (user.UsuarioId > 0)
+        {
+            var encontrado = UsuariosBLL.Buscar(user.UsuarioId);
+
+            if (encontrado != null)
+                this.user = encontrado;
+            else
+                toast.ShowWarning("No encontrado");
+        }
+    }
+
+    public void Guardar()
+    {
+        bool guardo;
+
+        guardo = UsuariosBLL.Guardar(user);
+
+        if (guardo)
+        {
+            Nuevo();
+            toast.ShowSuccess("Guardado correctamente");
+        }
+        else
+            toast.ShowError("No fue posible guardar");
+    }
+
+    public void Eliminar()
+    {
+        bool elimino;
+
+        elimino = UsuariosBLL.Eliminar(user.UsuarioId);
+
+        if (elimino)
+        {
+            Nuevo();
+            toast.ShowSuccess("Eliminado correctamente");
+        }
+        else
+            toast.ShowError("No fue posible eliminar");
+    }
+
+
+
+}

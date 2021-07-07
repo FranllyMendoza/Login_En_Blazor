@@ -1,0 +1,96 @@
+﻿@page "/Login"
+
+
+@using Login_En_Blazor.Models
+@using Login_En_Blazor.BLL
+
+
+
+@inject IToastService toast
+@inject NavigationManager Nav
+@inject IJSRuntime Confirmacion
+
+<EditForm Model="user">
+
+
+    <div class="card bg-light">
+
+        <div class="card-header">
+            <div class="text-center">
+                <b>Iniciar sesión</b>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-center mt-3">
+
+            <div>
+                <span class="oi oi-person"></span>
+            </div>
+
+        </div>
+      
+
+            <form>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-append">
+                        <span class="input-group-text"><i class="oi oi-person" /></span>
+                    </div>
+                    <InputText class="form-control" placeholder="Nombre de usuario" @bind-Value="user.Nombre" />
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-append">
+                        <span class="input-group-text"><i class="oi oi-key" /></span>
+                    </div>
+                    <InputText class="form-control" placeholder="Contraseña" type="password" @bind-Value="user.Clave" />
+                </div>
+
+                <div class="form-group text-center" display: inline-block>
+                    <button class="btn btn-primary" @onclick="Login">Iniciar sesión</button>
+                </div>
+
+                <div class="d-flex justify-content-center mt-4">
+                    No tienes una cuenta?<a href="/register" class="ml-2" @onclick="Registrar">Registrarse</a>
+                </div>
+            </form>
+
+        </div>
+
+    
+
+               
+
+    
+    
+
+   
+</EditForm>
+
+@code {
+
+    Usuarios user = new Usuarios();
+
+    public void Nuevo()
+    {
+        user = new Usuarios();
+
+    }
+    private void Login()
+    {
+
+        if (UsuariosBLL.ExisteUsuario(user.Nombre, user.Clave))
+        {
+            Nav.NavigateTo($"/Bienvenida");
+        }
+        else
+        {
+            Nuevo();
+        }
+    }
+
+    private void Registrar()
+    {
+        Nav.NavigateTo($"/RUsuarios");
+    }
+}
